@@ -17,7 +17,7 @@ import { TransaccionesModule } from './transacciones/transacciones.module';
       password: 'postgres',
       database: 'banco_digital',
       entities: [Cliente, Cuenta, Transaccion],
-      synchronize: true, 
+      synchronize: false, 
     }),
     ClientesModule,
     CuentasModule,

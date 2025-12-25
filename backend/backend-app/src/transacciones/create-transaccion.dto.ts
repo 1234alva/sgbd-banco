@@ -17,5 +17,5 @@ export class CreateTransaccionDto {
 
   @ApiProperty({ example: 1 })
   @IsNumber()
-  cuentaId: number; // Relación con Cuenta
+  cuentaId: number;
 }
