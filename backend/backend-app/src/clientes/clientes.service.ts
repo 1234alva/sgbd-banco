@@ -14,7 +14,7 @@ export class ClientesService {
   async findAll(): Promise<Cliente[]> {
     return this.clientesRepository.find({
       where: { activo: true },
-      relations: ['cuentas'], // incluir cuentas asociadas
+      relations: ['cuentas'], 
     });
   }
 

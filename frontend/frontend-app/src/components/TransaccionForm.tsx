@@ -5,24 +5,37 @@ export default function TransaccionForm() {
   const [formData, setFormData] = useState({
     fecha: '',
     tipo: '',
-    monto: '',
+    monto: 0,
     cuentaId: ''
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: type === 'number' ? Number(value) : value
     });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validación básica
+    if (!formData.cuentaId || isNaN(Number(formData.cuentaId))) {
+      alert('Por favor ingresa un ID de cuenta válido');
+      return;
+    }
+
     try {
-      const nuevaTransaccion = await createTransaccion(formData);
+      const nuevaTransaccion = await createTransaccion({
+        ...formData,
+        cuentaId: Number(formData.cuentaId) 
+      })
+
       console.log('Transacción creada:', nuevaTransaccion);
-      alert('Transacción registrada con éxito');
-      setFormData({ fecha: '', tipo: '', monto: '', cuentaId: '' });
+      alert(`Transacción registrada con éxito. ID asignado: ${nuevaTransaccion.id}`);
+
+      setFormData({ fecha: '', tipo: '', monto: 0, cuentaId: '' });
     } catch (error) {
       console.error('Error al crear transacción:', error);
       alert('Hubo un error al registrar la transacción');

@@ -1,28 +1,50 @@
 import { useState } from 'react';
-import { createCuenta } from '../services/cuentasService';
 
 export default function CuentaForm() {
   const [formData, setFormData] = useState({
-    numeroCuenta: '',
+    numero_cuenta: '',
     tipo: '',
-    saldo: '',
+    saldo: 0,
+    activa: true,
     clienteId: ''
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: type === 'number' ? Number(value) : value
     });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validación básica
+    if (!formData.clienteId || isNaN(Number(formData.clienteId))) {
+      alert('Por favor ingresa un ID de cliente válido');
+      return;
+    }
+
     try {
-      const nuevaCuenta = await createCuenta(formData);
-      console.log('Cuenta creada:', nuevaCuenta);
-      alert('Cuenta registrada con éxito');
-      setFormData({ numeroCuenta: '', tipo: '', saldo: '', clienteId: '' });
+      const res = await fetch('http://localhost:3000/cuentas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          numero_cuenta: formData.numero_cuenta,
+          tipo: formData.tipo,
+          saldo: formData.saldo,
+          activa: formData.activa,
+          clienteId: Number(formData.clienteId) 
+        }),
+      });
+
+      if (!res.ok) throw new Error('Error al registrar cuenta');
+
+      const data = await res.json();
+      alert(`Cuenta registrada con éxito. ID asignado: ${data.id}`);
+
+      setFormData({ numero_cuenta: '', tipo: '', saldo: 0, activa: true, clienteId: '' });
     } catch (error) {
       console.error('Error al crear cuenta:', error);
       alert('Hubo un error al registrar la cuenta');
@@ -32,11 +54,11 @@ export default function CuentaForm() {
   return (
     <form onSubmit={handleSubmit}>
       <div>
-        <label>Número de Cuenta:</label>
+        <label>Número de cuenta:</label>
         <input
           type="text"
-          name="numeroCuenta"
-          value={formData.numeroCuenta}
+          name="numero_cuenta"
+          value={formData.numero_cuenta}
           onChange={handleChange}
           required
         />
@@ -48,7 +70,6 @@ export default function CuentaForm() {
           name="tipo"
           value={formData.tipo}
           onChange={handleChange}
-          placeholder="Ahorros / Corriente"
           required
         />
       </div>
@@ -63,7 +84,7 @@ export default function CuentaForm() {
         />
       </div>
       <div>
-        <label>ID Cliente:</label>
+        <label>ID de Cliente:</label>
         <input
           type="text"
           name="clienteId"
@@ -72,7 +93,16 @@ export default function CuentaForm() {
           required
         />
       </div>
-      <button type="submit">Registrar Cuenta</button>
+      <div>
+        <label>Activa:</label>
+        <input
+          type="checkbox"
+          name="activa"
+          checked={formData.activa}
+          onChange={e => setFormData({ ...formData, activa: e.target.checked })}
+        />
+      </div>
+      <button type="submit">Guardar Cuenta</button>
     </form>
   );
 }

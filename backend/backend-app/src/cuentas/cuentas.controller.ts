@@ -1,39 +1,37 @@
-import { Body, Controller, Get, Post, Delete, Put, Param } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common';
 import { CuentasService } from './cuentas.service';
-import { Cuenta } from './cuenta.entity';
 import { CreateCuentaDto } from './create-cuenta.dto';
+import { Cuenta } from './cuenta.entity';
 
 @Controller('cuentas')
 export class CuentasController {
   constructor(private readonly cuentasService: CuentasService) {}
 
   @Get()
-  findAll(): Promise<Cuenta[]> {
+  async findAll(): Promise<Cuenta[]> {
     return this.cuentasService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number): Promise<Cuenta> {
+  async findOne(@Param('id') id: number): Promise<Cuenta> {
     return this.cuentasService.findOne(id);
   }
 
   @Post()
-  create(@Body() cuenta: CreateCuentaDto): Promise<Cuenta> {
-    return this.cuentasService.create(cuenta);
+  async create(@Body() dto: CreateCuentaDto): Promise<Cuenta> {
+    return this.cuentasService.create(dto);
   }
 
   @Put(':id')
-  update(
+  async update(
     @Param('id') id: number,
-    @Body() cuenta: Partial<CreateCuentaDto>,
+    @Body() dto: Partial<CreateCuentaDto>,
   ): Promise<Cuenta> {
-    return this.cuentasService.update(id, cuenta);
+    return this.cuentasService.update(id, dto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number): Promise<void> {
+  async remove(@Param('id') id: number): Promise<void> {
     return this.cuentasService.remove(id);
   }
 }
-
-
