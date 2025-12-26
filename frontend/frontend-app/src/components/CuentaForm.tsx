@@ -20,7 +20,6 @@ export default function CuentaForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validación básica
     if (!formData.clienteId || isNaN(Number(formData.clienteId))) {
       alert('Por favor ingresa un ID de cliente válido');
       return;
@@ -35,7 +34,7 @@ export default function CuentaForm() {
           tipo: formData.tipo,
           saldo: formData.saldo,
           activa: formData.activa,
-          clienteId: Number(formData.clienteId) 
+          clienteId: Number(formData.clienteId)
         }),
       });
 
@@ -64,14 +63,17 @@ export default function CuentaForm() {
         />
       </div>
       <div>
-        <label>Tipo:</label>
-        <input
-          type="text"
+        <label>Tipo de cuenta:</label>
+        <select
           name="tipo"
           value={formData.tipo}
-          onChange={handleChange}
+          onChange={e => setFormData({ ...formData, tipo: e.target.value })}
           required
-        />
+        >
+          <option value="">Seleccione...</option>
+          <option value="Ahorros">Ahorros</option>
+          <option value="Corriente">Corriente</option>
+        </select>
       </div>
       <div>
         <label>Saldo:</label>

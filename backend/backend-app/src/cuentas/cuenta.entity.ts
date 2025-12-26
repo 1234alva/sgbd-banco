@@ -9,36 +9,40 @@ import {
 import { Cliente } from '../clientes/cliente.entity';
 import { Transaccion } from '../transacciones/transaccion.entity';
 
+
+export enum TipoCuenta {
+  AHORROS = 'Ahorros',
+  CORRIENTE = 'Corriente',
+}
+
 @Entity('cuentas')
 export class Cuenta {
   @PrimaryGeneratedColumn()
   id: number;
 
-  
   @ManyToOne(() => Cliente, (cliente) => cliente.cuentas, {
     onDelete: 'CASCADE',
-    eager: false, 
+    eager: false,
   })
   @JoinColumn({ name: 'cliente_id' })
   cliente: Cliente;
 
-  
   @Column({ unique: true })
   numero_cuenta: string;
 
   
-  @Column()
-  tipo: string;
+  @Column({
+    type: 'enum',
+    enum: TipoCuenta,
+  })
+  tipo: TipoCuenta;
 
-  
   @Column('decimal', { precision: 12, scale: 2, default: 0 })
   saldo: number;
-
 
   @Column({ default: true })
   activa: boolean;
 
-  
   @OneToMany(() => Transaccion, (transaccion) => transaccion.cuenta)
   transacciones: Transaccion[];
 }
